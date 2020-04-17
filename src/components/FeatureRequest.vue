@@ -7,6 +7,7 @@
         <VueInput
           type="textarea"
           rows="4"
+          class="info"
           v-model="attrs.rationale"
           required
         />
@@ -21,6 +22,7 @@
           rows="4"
           v-model="attrs.proposal"
           required
+          class="info"
         />
         <i18n slot="subtitle" id="proposal-subtitle"/>
       </VueFormField>

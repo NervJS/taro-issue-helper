@@ -50,6 +50,7 @@
             v-model="title"
             required
             autofocus
+            class="info"
             @blur="findIssues"
           />
           <i18n
@@ -104,7 +105,7 @@
       <div class="form-actions">
         <VueButton
           type="submit"
-          class="primary big"
+          class="big"
           :label="i18n('preview')"
         />
       </div>
@@ -115,12 +116,13 @@
       :title="i18n('preview-title')"
       class="medium"
       @close="show = false"
+      ref="htmlModal"
     >
       <div class="default-body" v-html="generated.html"/>
 
       <div slot="footer" class="actions">
         <VueButton
-          class="primary big"
+          class="big"
           :label="i18n('create')"
           @click="create()"
         />
@@ -258,6 +260,15 @@ export default {
 
 <style lang="stylus">
 @import '~@vue/ui/dist/vue-ui.css'
+a {
+  color #5c5cff!important
+}
+.vue-ui-switch.selected>.content>.wrapper {
+  background #5c5cff
+}
+.vue-ui-button.primary {
+  background inherit
+}
 </style>
 
 <style lang="stylus" scoped>
@@ -283,4 +294,5 @@ export default {
 .app-footer
   text-align center
   margin 24px 0
+
 </style>

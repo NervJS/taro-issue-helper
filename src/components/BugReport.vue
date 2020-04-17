@@ -4,6 +4,7 @@
       <VueFormField :title="i18n('repro-title')">
         <VueInput
           type="url"
+          class="info"
           v-model="attrs.reproduction"
           :disabled="reproNotAvailable"
           required
@@ -14,7 +15,7 @@
             id="repro-subtitle"
             @click-modal="show = true"
           />
-          <VueSwitch  v-model="reproNotAvailable">
+          <VueSwitch  v-model="reproNotAvailable" class="info">
             <i18n id="cli-no-repro"/>
           </VueSwitch>
         </template>
@@ -25,6 +26,7 @@
         :title="i18n('browser-and-os-title')"
       >
         <VueInput
+          class="info"
           v-model="attrs.browserAndOS"
           required
         />
@@ -40,6 +42,7 @@
         :title="i18n('mini-version')"
       >
         <VueInput
+          class="info"
           v-model="attrs.miniVersion"
           required
         />
@@ -56,6 +59,7 @@
         :title="i18n('steps-title')"
       >
         <VueInput
+          class="info"
           type="textarea"
           rows="4"
           v-model="attrs.steps"
@@ -70,6 +74,7 @@
         <VueInput
           type="textarea"
           rows="4"
+          class="info"
           v-model="attrs.expected"
           required
         />
@@ -79,6 +84,7 @@
         :title="i18n('actual-title')"
       >
         <VueInput
+          class="info"
           type="textarea"
           rows="4"
           v-model="attrs.actual"
@@ -91,6 +97,7 @@
         :title="i18n('cli-envinfo-title')"
       >
         <VueInput
+          class="info"
           v-model="attrs.cliEnvInfo"
           type="textarea"
           rows="4"
@@ -116,6 +123,7 @@
         :subtitle="i18n('extra-subtitle')"
       >
         <VueInput
+          class="info"
           type="textarea"
           rows="4"
           v-model="attrs.extra"

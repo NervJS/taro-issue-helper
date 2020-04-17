@@ -44,5 +44,4 @@ export default {
   padding 24px
   margin 24px 0
   border-radius $br
-  background lighten($vue-ui-color-light-neutral, 60%)
 </style>

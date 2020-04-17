@@ -1,17 +1,17 @@
 <template>
   <nav class="app-header">
     <div class="container">
-      <a class="brand" href="#">
+      <span class="brand" href="#" style="color: white">
         <img
           class="logo"
-          src="../assets/images/logo.png"
+          src="https://taro-docs.jd.com/taro/img/logo-taro.png"
           alt="Taro's logo"
           height="24"
         >
         Issue Helper
-      </a>
+      </span>
 
-      <ul class="nav">
+      <!-- <ul class="nav">
         <li
           v-for="(locale, key) in $root.$locales"
           :key="key"
@@ -26,7 +26,7 @@
             {{ locale._label }}
           </a>
         </li>
-      </ul>
+      </ul> -->
     </div>
   </nav>
 </template>
@@ -41,8 +41,6 @@ export default {
 @import "../style/imports"
 
 .app-header
-  background lighten($vue-ui-color-light-neutral, 60%)
-  border-bottom solid 1px $vue-ui-color-light-neutral
 
   &,
   .container,
