@@ -5,7 +5,7 @@
         <img
           class="logo"
           src="../assets/images/logo.png"
-          alt="Vue's logo"
+          alt="Taro's logo"
           height="24"
         >
         Issue Helper
@@ -21,6 +21,7 @@
             class="nav-link"
             :class="{ active: lang === key }"
             @click="$emit('change-lang', key)"
+            v-if="key !== 'en'"
           >
             {{ locale._label }}
           </a>

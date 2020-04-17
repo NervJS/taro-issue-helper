@@ -239,8 +239,11 @@ export default {
     },
 
     generate () {
-      this.generated = this.$refs.content.generate()
-      this.show = true
+      const html = this.$refs.content.generate()
+      if (html) {
+        this.generated = html
+        this.show = true
+      }
     },
 
     create () {

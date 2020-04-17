@@ -101,6 +101,13 @@
           slot="subtitle"
           id="cli-envinfo-subtitle"
         />
+
+        <div class="subtitle vue-ui-text danger" v-if="wrongCLIinfo">
+          <div class="vue-ui-icon">
+            <svg><use xlink:href="#ic_error_24px"></use></svg>
+          </div>
+          <span style="font-size: 14px">请补充准确的环境信息</span>
+        </div>
       </VueFormField>
 
       <VueFormField
@@ -169,6 +176,14 @@ export default {
         .sort((a, b) => gt(a.value, b.value) ? -1 : 1)
     },
 
+    wrongCLIinfo () {
+      const {
+        cliEnvInfo
+      } = this.attrs
+
+      return cliEnvInfo && cliEnvInfo.indexOf('environment info:') === -1
+    },
+
     isCLI () {
       return this.repo === 'vuejs/vue-cli'
     },
@@ -212,6 +227,9 @@ export default {
       return '未找到平台，请手动修改。'
     },
     generate () {
+      if (this.wrongCLIinfo) {
+        return false
+      }
       const {
         reproduction,
         steps,
