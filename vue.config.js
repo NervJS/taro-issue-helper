@@ -2,7 +2,7 @@ const path = require('path')
 const merge = require('deepmerge')
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production'
+  baseUrl: process.env.NODE_ENV === 'production'
     ? '/taro-issue-helper/'
     : '/',
   configureWebpack: {
