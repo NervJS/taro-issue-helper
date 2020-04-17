@@ -1,12 +1,12 @@
 export default {
   watch: {
-    show (val) {
-      if (!val) {
-        const newUrl = window.location.origin + '/' + window.location.search
-        window.history.pushState({
-          path: newUrl
-        }, '', newUrl)
-      }
+    show () {
+      // if (!val) {
+      //   const newUrl = window.location.origin + '/' + window.location.search
+      //   window.history.pushState({
+      //     path: newUrl
+      //   }, '', newUrl)
+      // }
     }
   },
 

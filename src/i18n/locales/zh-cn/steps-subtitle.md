@@ -1,1 +1,1 @@
-打开重现后，我们需要执行哪些操作才能让 bug 出现？简洁清晰的重现步骤能够帮助我们更迅速地定位问题所在。支持使用 [Markdown](https://guides.github.com/features/mastering-markdown/) 来格式化列表或是代码片段。
+打开重现后，我们需要执行哪些操作才能让 bug 出现？简洁清晰的重现步骤能够帮助我们更迅速地定位问题所在。支持使用 [Markdown](https://help.github.com/cn/github/writing-on-github/basic-writing-and-formatting-syntax) 来格式化列表或是代码片段。如果代码片段没有使用 Markdown 语法包裹，你的代码可能会丢失。

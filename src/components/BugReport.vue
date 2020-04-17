@@ -1,23 +1,27 @@
 <template>
   <div class="bug-report" style="margin:0">
     <div class="vue-ui-grid col-2 default-gap">
-      <VueFormField
-        :title="i18n('version-title')"
-        :subtitle="i18n('version-subtitle')"
-      >
-        <VueTypeAhead
-          v-model="attrs.version"
-          :suggestions="suggestions"
-          :loading="loadingVersion"
-          show-all
-          show-max="30"
-          restrict-choice
+      <VueFormField :title="i18n('repro-title')">
+        <VueInput
+          type="url"
+          v-model="attrs.reproduction"
+          :disabled="reproNotAvailable"
           required
         />
+
+        <template slot="subtitle">
+          <i18n
+            id="repro-subtitle"
+            @click-modal="show = true"
+          />
+          <VueSwitch  v-model="reproNotAvailable">
+            <i18n id="cli-no-repro"/>
+          </VueSwitch>
+        </template>
       </VueFormField>
 
       <VueFormField
-        v-if="repo === 'vuejs/vue-devtools'"
+        v-if="targetType === 'h5'"
         :title="i18n('browser-and-os-title')"
       >
         <VueInput
@@ -31,58 +35,21 @@
         />
       </VueFormField>
 
-      <template v-else>
-        <VueFormField
-          v-if="isCLI && doesNotSupportVueInfo"
-          :title="i18n('node-and-os-title')"
-        >
-          <VueInput
-            v-model="attrs.nodeAndOS"
-            required
-          />
+      <VueFormField
+        v-if="targetType === 'mini'"
+        :title="i18n('mini-version')"
+      >
+        <VueInput
+          v-model="attrs.miniVersion"
+          required
+        />
 
-          <i18n
-            slot="subtitle"
-            id="node-and-os-subtitle"
-          />
-        </VueFormField>
+        <i18n
+          slot="subtitle"
+          id="mini-version-subtitle"
+        />
+      </VueFormField>
 
-        <VueFormField
-          v-else-if="isCLI"
-          :title="i18n('cli-envinfo-title')"
-          class="span-2"
-        >
-          <VueInput
-            v-model="attrs.cliEnvInfo"
-            type="textarea"
-            required
-          />
-
-          <i18n
-            slot="subtitle"
-            id="cli-envinfo-subtitle"
-          />
-        </VueFormField>
-
-        <VueFormField :title="i18n('repro-title')">
-          <VueInput
-            type="url"
-            v-model="attrs.reproduction"
-            :disabled="isCLI && reproNotAvailable"
-            required
-          />
-
-          <template slot="subtitle">
-            <i18n
-              :id="isCLI ? 'cli-repro-subtitle' : 'repro-subtitle'"
-              @click-modal="show = true"
-            />
-            <VueSwitch v-if="isCLI" v-model="reproNotAvailable">
-              <i18n id="cli-no-repro"/>
-            </VueSwitch>
-          </template>
-        </VueFormField>
-      </template>
 
       <VueFormField
         class="span-2"
@@ -121,6 +88,23 @@
 
       <VueFormField
         class="span-2"
+        :title="i18n('cli-envinfo-title')"
+      >
+        <VueInput
+          v-model="attrs.cliEnvInfo"
+          type="textarea"
+          rows="4"
+          required
+        />
+
+        <i18n
+          slot="subtitle"
+          id="cli-envinfo-subtitle"
+        />
+      </VueFormField>
+
+      <VueFormField
+        class="span-2"
         :title="i18n('extra-title')"
         :subtitle="i18n('extra-subtitle')"
       >
@@ -146,12 +130,13 @@
 </template>
 
 <script>
+import { targets } from '../config'
 import { gt, lt } from 'semver'
 import { generate } from '../helpers'
 import modal from '../mixins/check-modal'
 
 export default {
-  props: ['repo'],
+  props: ['repo', 'target'],
 
   mixins: [modal],
 
@@ -168,6 +153,8 @@ export default {
         browserAndOS: '',
         nodeAndOS: '',
         cliEnvInfo: '',
+        miniVersion: '',
+        rnVersion: ''
       },
       versions: [],
       loadingVersion: false,
@@ -188,6 +175,19 @@ export default {
 
     doesNotSupportVueInfo () {
       return this.attrs.version && lt(this.attrs.version, '3.2.0')
+    },
+
+    targetType () {
+      const minis = ['weapp', 'alipay', 'swan', 'qq', 'jd', 'quickapp']
+      if (minis.indexOf(this.target) !== -1) {
+        return 'mini'
+      } else if (this.target === 'h5') {
+        return 'h5'
+      } else if (this.target === 'rn') {
+        return 'rn'
+      }
+
+      return ''
     }
   },
 
@@ -200,76 +200,58 @@ export default {
   },
 
   created () {
-    this.fetchVersions()
     this.checkModal('why-repro')
   },
 
   methods: {
-    async fetchVersions (page = 1) {
-      this.loadingVersion = true
-      const repo = this.repo
-      const response = await fetch(`https://api.github.com/repos/${repo}/releases?page=${page}&per_page=100`)
-      const releases = await response.json()
-
-      if (this.repo !== repo) return
-
-      if (!releases || !(releases instanceof Array)) return false
-
-      this.versions = this.versions.concat(releases.map(
-        r => ({ value: /^v/.test(r.tag_name) ? r.tag_name.substr(1) : r.tag_name })
-      ))
-
-      const link = response.headers.get('Link')
-
-      if (link && link.indexOf('rel="next"') > -1) {
-        await this.fetchVersions(page + 1)
-      } else {
-        this.loadingVersion = false
+    getTarget () {
+      const target = targets.find(t => t.id === this.target)
+      if (target) {
+        return target.name
       }
+      return '未找到平台，请手动修改。'
     },
-
     generate () {
       const {
-        version,
         reproduction,
         steps,
         expected,
         actual,
         extra,
         browserAndOS,
-        nodeAndOS,
-        cliEnvInfo
+        cliEnvInfo,
+        miniVersion
       } = this.attrs
 
       return generate(`
-### Version
-${version}
+### 相关平台
+${this.getTarget()}
 
-${reproduction ? `### Reproduction link
+${reproduction ? `### 复现仓库
 [${reproduction}](${reproduction})` : ``}
 
-${browserAndOS ? `### Browser and OS info
-${browserAndOS}` : ``}
+${browserAndOS ? `**浏览器版本: ${browserAndOS}**` : ``}
 
-${nodeAndOS ? `### Node and OS info
-${nodeAndOS}` : ``}
+${miniVersion ? `**小程序基础库: ${miniVersion}**` : ``}
 
-${cliEnvInfo ? `### Environment info
+### 复现步骤
+${steps}
+
+### 期望结果
+${expected}
+
+### 实际结果
+${actual}
+
+${cliEnvInfo ? `### 环境信息
 \`\`\`
 ${cliEnvInfo}
 \`\`\`
 ` : ``}
 
-### Steps to reproduce
-${steps}
-
-### What is expected?
-${expected}
-
-### What is actually happening?
-${actual}
-
-${extra ? `---\n${extra}` : ''}
+${extra ? `---
+### 补充信息
+${extra}` : ''}
   `.trim())
     }
   },

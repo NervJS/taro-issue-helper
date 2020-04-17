@@ -46,10 +46,10 @@ export default {
       const { rationale, proposal } = this.attrs
 
       return generate(`
-### What problem does this feature solve?
+### 这个特性解决了什么问题？
 ${rationale}
 
-### What does the proposed API look like?
+### 这个 API 长什么样？
 ${proposal}
   `.trim())
     }

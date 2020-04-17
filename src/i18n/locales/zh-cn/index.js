@@ -9,11 +9,13 @@ export default {
   // bug report
   'repo-title': '相关库',
   'repo-subtitle': '请确保将 issue 发往相关的仓库。',
+  'target-title': '相关平台',
   'type-title': '这是一个',
   'title-title': 'Issue 标题',
+  'title-title-subtitle': require('./title-title-subtitle.md'),
 
   'version-title': '版本',
-  'version-subtitle': '请检查问题是否存在于 Vue 的最新版本中。',
+  'version-subtitle': '请检查问题是否存在于 Taro 的最新版本中。',
 
   'repro-title': '重现链接',
   'repro-subtitle': require('./repro-subtitle.md'),
@@ -28,8 +30,11 @@ export default {
   'cli-envinfo-title': '环境信息',
   'cli-envinfo-subtitle': require('./cli-envinfo-subtitle.md'),
 
-  'browser-and-os-title': '浏览器和操作系统信息',
-  'browser-and-os-subtitle': '请写明浏览器和操作系统的名称/版本，例如: Chrome 62 / Windows 10',
+  'browser-and-os-title': '浏览器版本',
+  'browser-and-os-subtitle': '请写明浏览器版本，例如: Chrome 62、Safari 10',
+
+  'mini-version': '小程序基础库版本',
+  'mini-version-subtitle': '你可以在小程序开发者工具的「详情」中找到小程序基础库版本。',
 
   'steps-title': '重现步骤',
   'steps-subtitle': require('./steps-subtitle.md'),
@@ -37,7 +42,7 @@ export default {
   'expected-title': '期望的结果是什么？',
   'actual-title': '实际的结果是什么？',
   'extra-title': '补充说明（可选）',
-  'extra-subtitle': '比如：遇到这个 bug 的业务场景、上下文。',
+  'extra-subtitle': '比如：遇到这个 bug 的业务场景、上下文。或者根据你的研究，问题可能出在什么地方？',
 
   // feature request
   'rationale-title': '这个功能解决了什么问题？',
@@ -45,6 +50,9 @@ export default {
 
   'proposal-title': '你期望的 API 是怎样的？',
   'proposal-subtitle': require('./proposal-subtitle.md'),
+
+  'simple-clear-title': '简洁明确的标题',
+  'simple-clear-modal': require('./simple-clear-modal.md'),
 
   // preview
   'preview': '预览',

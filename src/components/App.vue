@@ -8,15 +8,15 @@
 
       <div class="common-fields vue-ui-grid col-2 default-gap">
         <VueFormField
-          :title="i18n('repo-title')"
-          :subtitle="i18n('repo-subtitle')"
+          :title="i18n('target-title')"
           class="first-row"
         >
           <VueSelect
-            v-model="repo"
+            required
+            v-model="target"
           >
             <VueSelectButton
-              v-for="option of repos"
+              v-for="option of targets"
               :key="option.id"
               :value="option.id"
               :label="option.name"
@@ -51,6 +51,11 @@
             required
             autofocus
             @blur="findIssues"
+          />
+          <i18n
+            slot="subtitle"
+            id="title-title-subtitle"
+            @click-modal="titleShow = true"
           />
           <template slot="subtitle">
             <div class="similar-issues" v-if="issues.length">
@@ -93,7 +98,7 @@
 
       <!-- content component -->
       <keep-alive>
-        <component :is="type" ref="content" :repo="repo"/>
+        <component :is="type" ref="content" :repo="repo" :target="target"/>
       </keep-alive>
 
       <div class="form-actions">
@@ -121,22 +126,33 @@
         />
       </div>
     </VueModal>
+
+    <VueModal
+      v-if="titleShow"
+      :title="i18n('simple-clear-title')"
+      class="medium"
+      @close="titleShow = false"
+    >
+      <div class="default-body">
+        <i18n id="simple-clear-modal"/>
+      </div>
+    </VueModal>
   </div>
 
   <footer class="app-footer">
     <p>&hellip;</p>
     <small>
-      Built with
-      <a href="https://github.com/vuejs/vue-cli">vue-cli</a>
+      Inspired by 
+      <a href="https://github.com/vuejs/vue-issue-helper">Vue Issue Helper </a>
       &centerdot;
-      Check out source on <a href="https://github.com/vuejs/vue-issue">GitHub</a>
+      Check out source on <a href="https://github.com/nervjs/taro-issue-helper">GitHub</a>
     </small>
   </footer>
 </div>
 </template>
 
 <script lang="babel">
-import { repos } from '../config'
+import { targets } from '../config'
 import { getQuery, updateQuery } from '../helpers'
 
 import FormIntro from './FormIntro.vue'
@@ -166,10 +182,12 @@ export default {
       },
       show: false,
       preview: false,
-      repo: '',
-      repos,
+      repo: 'nervjs/taro',
+      target: 'weapp',
       type: 'bug-report',
+      targets,
       versions: {},
+      titleShow: false
     }
   },
 
@@ -189,17 +207,26 @@ export default {
 
     type (value) {
       updateQuery({ type: value })
+    },
+
+    target () {
+      //
     }
   },
 
   created () {
     const { repo, type } = getQuery()
-    this.repo = repo || 'vuejs/vue'
+    this.repo = repo || 'nervjs/taro'
     this.type = type || 'bug-report'
+    this.checkSimpleTitle()
   },
 
   methods: {
+    checkSimpleTitle () {
+      this.titleShow = window.location.hash === `#simple-clear-title`
+    },
     setLang (lang) {
+      // eslint-disable-next-line no-console
       this.$lang = lang
       updateQuery({ lang })
     },
