@@ -1,6 +1,39 @@
 <template>
   <div class="bug-report" style="margin:0">
     <div class="vue-ui-grid col-2 default-gap">
+      <VueFormField
+        :title="i18n('version-title')"
+        :subtitle="i18n('version-subtitle')"
+      >
+        <VueTypeAhead
+          v-model="attrs.version"
+          :suggestions="suggestions"
+          :loading="loadingVersion"
+          show-all
+          class="info"
+          show-max="30"
+          restrict-choice
+          required
+        />
+      </VueFormField>
+
+      <VueFormField
+        :title="i18n('framework-title')"
+      >
+        <VueSelect
+          required
+          v-model="framework"
+          :disabled="!isTaroNext"
+        >
+          <VueSelectButton
+            v-for="option of frameworks"
+            :key="option"
+            :value="option"
+            :label="option"
+          />
+        </VueSelect>
+      </VueFormField>
+
       <VueFormField :title="i18n('repro-title')">
         <VueInput
           type="url"
@@ -146,7 +179,7 @@
 
 <script>
 import { targets } from '../config'
-import { gt, lt } from 'semver'
+import { gt, lt, valid, gte } from 'semver'
 import { generate } from '../helpers'
 import modal from '../mixins/check-modal'
 
@@ -171,6 +204,8 @@ export default {
         miniVersion: '',
         rnVersion: ''
       },
+      framework: 'React',
+      frameworks: ['React', 'Vue', 'Nerv'],
       versions: [],
       loadingVersion: false,
       reproNotAvailable: false
@@ -182,6 +217,10 @@ export default {
       return this.versions
         .slice()
         .sort((a, b) => gt(a.value, b.value) ? -1 : 1)
+    },
+
+    isTaroNext () {
+      return this.attrs.version && valid(this.attrs.version) && gte(this.attrs.version, '3.0.0-alpha.0')
     },
 
     wrongCLIinfo () {
@@ -223,6 +262,7 @@ export default {
   },
 
   created () {
+    this.fetchVersions()
     this.checkModal('why-repro')
   },
 
@@ -233,6 +273,27 @@ export default {
         return target.name
       }
       return '未找到平台，请手动修改。'
+    },
+    async fetchVersions (page = 1) {
+      this.loadingVersion = true
+      const repo = this.repo
+      const response = await fetch(`https://api.github.com/repos/${repo}/tags?page=${page}&per_page=100`)
+      const releases = await response.json()
+      if (this.repo !== repo) return
+      if (!releases || !(releases instanceof Array)) return false
+      this.versions = this.versions.concat(releases.map(
+        r => ({ value: /^v/.test(r.name) ? r.name.substr(1) : r.name })
+      ).filter(p => valid(p.value) && !p.value.includes('experimental')))
+      const link = response.headers.get('Link')
+      if (link && link.indexOf('rel="next"') > -1) {
+        await this.fetchVersions(page + 1)
+      } else {
+        this.loadingVersion = false
+      }
+      // set current version to the latest
+      if (this.suggestions.length) {
+        this.attrs.version = this.suggestions[0].value
+      }
     },
     generate () {
       if (this.wrongCLIinfo) {
@@ -255,10 +316,8 @@ ${this.getTarget()}
 
 ${reproduction ? `### 复现仓库
 [${reproduction}](${reproduction})` : ``}
-
-${browserAndOS ? `**浏览器版本: ${browserAndOS}**` : ``}
-
-${miniVersion ? `**小程序基础库: ${miniVersion}**` : ``}
+${browserAndOS ? `**浏览器版本: ${browserAndOS}**` : ``}${miniVersion ? `**小程序基础库: ${miniVersion}**` : ``}
+${`**使用框架: ${this.isTaroNext ? 'React' : this.framework}**`}
 
 ### 复现步骤
 ${steps}

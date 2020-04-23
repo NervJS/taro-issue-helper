@@ -24,6 +24,8 @@ export default {
   'cli-repro-subtitle': require('./cli-repro-subtitle.md'),
   'cli-no-repro': '如果你的问题无法用代码重现，点选这里。',
 
+  'framework-title': '使用框架',
+
   'node-and-os-title': 'Node.js、npm/yarn 以及操作系统信息',
   'node-and-os-subtitle': '请写明 Node.js 版本、npm/yarn 的版本、操作系统的名称以及版本，例如: Node 10.7.0 / yarn 1.7.0 / Windows 10',
 
