@@ -205,7 +205,7 @@ export default {
         rnVersion: ''
       },
       framework: 'React',
-      frameworks: ['React', 'Vue', 'Nerv'],
+      frameworks: ['React', 'Nerv', 'Vue 2', 'Vue 3'],
       versions: [],
       loadingVersion: false,
       reproNotAvailable: false

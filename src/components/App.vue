@@ -154,6 +154,7 @@
 </template>
 
 <script lang="babel">
+import { major } from 'semver'
 import { targets } from '../config'
 import { getQuery, updateQuery } from '../helpers'
 
@@ -162,6 +163,19 @@ import AppHeader from './AppHeader.vue'
 import BugReport from './BugReport.vue'
 import FeatureRequest from './FeatureRequest.vue'
 import search from '../mixins/github-search'
+
+function getFramework (framework) {
+  switch (framework) {
+    case 'Vue 2':
+      return 'vue2'
+    case 'Vue 3':
+      return 'vue3'
+    case 'Nerv':
+      return 'nerv'
+    default:
+      return 'react'
+  }
+}
 
 export default {
   name: 'App',
@@ -251,7 +265,16 @@ export default {
     create () {
       const title = encodeURIComponent(this.title).replace(/%2B/gi, '+')
       const body = encodeURIComponent(this.generated.markdown).replace(/%2B/gi, '+')
-      const label = this.type === 'feature-request' ? '&labels=feature%20request' : ''
+      const content = this.$refs.content
+      const label = '&labels=' + (
+        this.type === 'feature-request'
+          ? 'feature%20request'
+          : [
+            'T-' + this.target,
+            'V-' + major(content.attrs.version),
+            'F-' + getFramework(content.framework)
+          ].join(',')
+      )
       window.open(`https://github.com/${this.repo}/issues/new?title=${title}&body=${body}${label}`)
     },
   },
