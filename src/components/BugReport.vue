@@ -311,6 +311,8 @@ export default {
       } = this.attrs
 
       return generate(`
+<!-- 请不要删除自动生成的 Issue 标签 -->
+<!-- 请不要删除自动生成的 Issue 标签 -->
 ### 相关平台
 ${this.getTarget()}
 
