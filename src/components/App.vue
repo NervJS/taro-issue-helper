@@ -266,7 +266,7 @@ export default {
       const title = encodeURIComponent(this.title).replace(/%2B/gi, '+')
       const body = encodeURIComponent(this.generated.markdown).replace(/%2B/gi, '+')
       const content = this.$refs.content
-      const label = '&labels=' + (
+      const label = encodeURIComponent('<!--labels=' + (
         this.type === 'feature-request'
           ? 'feature%20request'
           : [
@@ -274,7 +274,7 @@ export default {
             'V-' + major(content.attrs.version),
             'F-' + getFramework(content.framework)
           ].join(',')
-      )
+      ) + '-->')
       window.open(`https://github.com/${this.repo}/issues/new?title=${title}&body=${body}${label}`)
     },
   },
