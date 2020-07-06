@@ -268,7 +268,7 @@ export default {
       const content = this.$refs.content
       const label = encodeURIComponent('<!--labels=' + (
         this.type === 'feature-request'
-          ? 'feature%20request'
+          ? 'enhancement'
           : [
             'T-' + this.target,
             'V-' + major(content.attrs.version),
