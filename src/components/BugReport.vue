@@ -253,9 +253,9 @@ export default {
 
       if (!reproduction) return false
 
-      if (reproduction === 'git@github.com:NervJS/taro.git' || reproduction === 'https://github.com/NervJS/taro.git') return true
+      if (reproduction === 'git@github.com:NervJS/taro.git' || /^https:\/\/github\.com\/NervJS\/taro/.test(reproduction)) return true
 
-      const valid = /^(git@|https:\/\/git).*\.git$/.test(reproduction) || /^https:\/\/gist\.github\.com/.test(reproduction)
+      const valid = /^(git@|https:\/\/git)/.test(reproduction) || /^https:\/\/gist\.github\.com/.test(reproduction)
       return !valid
     },
 
