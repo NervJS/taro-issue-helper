@@ -1,6 +1,7 @@
 <template>
   <div class="bug-report" style="margin:0">
     <div class="vue-ui-grid col-2 default-gap">
+      <!-- S 版本 -->
       <VueFormField
         :title="i18n('version-title')"
         :subtitle="i18n('version-subtitle')"
@@ -16,7 +17,9 @@
           required
         />
       </VueFormField>
+      <!-- E 版本 -->
 
+      <!-- S 使用框架 -->
       <VueFormField
         :title="i18n('framework-title')"
       >
@@ -33,10 +36,11 @@
           />
         </VueSelect>
       </VueFormField>
+      <!-- E 使用框架 -->
 
+      <!-- S 重现链接 -->
       <VueFormField :title="i18n('repro-title')">
         <VueInput
-          type="url"
           class="info"
           v-model="attrs.reproduction"
           :disabled="reproNotAvailable"
@@ -52,8 +56,17 @@
             <i18n id="cli-no-repro"/>
           </VueSwitch>
         </template>
-      </VueFormField>
 
+        <div class="subtitle vue-ui-text danger" v-if="wrongRepoinfo">
+          <div class="vue-ui-icon" style="vertical-align: middle;margin: -2px 5px 0 0;">
+            <svg><use xlink:href="#ic_error_24px"></use></svg>
+          </div>
+          <span style="font-size: 14px">请填写准确的仓库地址</span>
+        </div>
+      </VueFormField>
+      <!-- E 重现链接 -->
+
+      <!-- S 浏览器版本 -->
       <VueFormField
         v-if="targetType === 'h5'"
         :title="i18n('browser-and-os-title')"
@@ -69,7 +82,9 @@
           id="browser-and-os-subtitle"
         />
       </VueFormField>
+      <!-- E 浏览器版本 -->
 
+      <!-- S 小程序基础库版本 -->
       <VueFormField
         v-if="targetType === 'mini'"
         :title="i18n('mini-version')"
@@ -85,8 +100,9 @@
           id="mini-version-subtitle"
         />
       </VueFormField>
+      <!-- E 小程序基础库版本 -->
 
-
+      <!-- S 重现步骤 -->
       <VueFormField
         class="span-2"
         :title="i18n('steps-title')"
@@ -100,7 +116,9 @@
         />
         <i18n slot="subtitle" id="steps-subtitle"/>
       </VueFormField>
+      <!-- E 重现步骤 -->
 
+      <!-- S 期望的结果是什么？ -->
       <VueFormField
         :title="i18n('expected-title')"
       >
@@ -112,7 +130,9 @@
           required
         />
       </VueFormField>
+      <!-- E 期望的结果是什么？ -->
 
+      <!-- S 实际的结果是什么？ -->
       <VueFormField
         :title="i18n('actual-title')"
       >
@@ -124,7 +144,9 @@
           required
         />
       </VueFormField>
+      <!-- E 实际的结果是什么？ -->
 
+      <!-- S 环境信息 -->
       <VueFormField
         class="span-2"
         :title="i18n('cli-envinfo-title')"
@@ -143,13 +165,15 @@
         />
 
         <div class="subtitle vue-ui-text danger" v-if="wrongCLIinfo">
-          <div class="vue-ui-icon">
+          <div class="vue-ui-icon" style="vertical-align: middle;margin: -2px 5px 0 0;">
             <svg><use xlink:href="#ic_error_24px"></use></svg>
           </div>
           <span style="font-size: 14px">请补充准确的环境信息</span>
         </div>
       </VueFormField>
+      <!-- E 环境信息 -->
 
+      <!-- S 补充说明（可选） -->
       <VueFormField
         class="span-2"
         :title="i18n('extra-title')"
@@ -162,6 +186,7 @@
           v-model="attrs.extra"
         />
       </VueFormField>
+      <!-- E 补充说明（可选） -->
     </div>
 
     <VueModal
@@ -179,7 +204,7 @@
 
 <script>
 import { targets } from '../config'
-import { gt, lt, valid, gte } from 'semver'
+import { gt, lt, valid, gte, satisfies } from 'semver'
 import { generate } from '../helpers'
 import modal from '../mixins/check-modal'
 
@@ -223,6 +248,17 @@ export default {
       return this.attrs.version && valid(this.attrs.version) && gte(this.attrs.version, '3.0.0-alpha.0')
     },
 
+    wrongRepoinfo () {
+      const { reproduction } = this.attrs
+
+      if (!reproduction) return false
+
+      if (reproduction === 'git@github.com:NervJS/taro.git' || reproduction === 'https://github.com/NervJS/taro.git') return true
+
+      const valid = /^(git@|https:\/\/git).*\.git$/.test(reproduction) || /^https:\/\/gist\.github\.com/.test(reproduction)
+      return !valid
+    },
+
     wrongCLIinfo () {
       const {
         cliEnvInfo
@@ -240,7 +276,7 @@ export default {
     },
 
     targetType () {
-      const minis = ['weapp', 'alipay', 'swan', 'qq', 'jd', 'quickapp']
+      const minis = ['weapp', 'alipay', 'swan', 'tt', 'qq', 'jd', 'quickapp']
       if (minis.indexOf(this.target) !== -1) {
         return 'mini'
       } else if (this.target === 'h5') {
@@ -274,29 +310,30 @@ export default {
       }
       return '未找到平台，请手动修改。'
     },
-    async fetchVersions (page = 1) {
+    async fetchVersions () {
       this.loadingVersion = true
       const repo = this.repo
-      const response = await fetch(`https://api.github.com/repos/${repo}/tags?page=${page}&per_page=100`)
+      const response = await fetch(`https://gitee.com/api/v5/repos/mirrors/Taro/tags`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
       const releases = await response.json()
       if (this.repo !== repo) return
       if (!releases || !(releases instanceof Array)) return false
-      this.versions = this.versions.concat(releases.map(
-        r => ({ value: /^v/.test(r.name) ? r.name.substr(1) : r.name })
-      ).filter(p => valid(p.value) && !p.value.includes('experimental')))
-      const link = response.headers.get('Link')
-      if (link && link.indexOf('rel="next"') > -1) {
-        await this.fetchVersions(page + 1)
-      } else {
-        this.loadingVersion = false
-      }
+      const versions = releases
+        .map(r => ({ value: /^v/.test(r.name) ? r.name.substr(1) : r.name }))
+        .filter(p => satisfies(p.value, '>=1.2.0') && !p.value.includes('experimental'))
+      this.versions = this.versions.concat(versions)
+      this.loadingVersion = false
+
       // set current version to the latest
       if (this.suggestions.length) {
         this.attrs.version = this.suggestions[0].value
       }
     },
     generate () {
-      if (this.wrongCLIinfo) {
+      if (this.wrongCLIinfo || this.wrongRepoinfo) {
         return false
       }
       const {
@@ -319,7 +356,7 @@ ${this.getTarget()}
 ${reproduction ? `### 复现仓库
 [${reproduction}](${reproduction})` : ``}
 ${browserAndOS ? `**浏览器版本: ${browserAndOS}**` : ``}${miniVersion ? `**小程序基础库: ${miniVersion}**` : ``}
-${`**使用框架: ${this.isTaroNext ? 'React' : this.framework}**`}
+${`**使用框架: ${!this.isTaroNext ? 'React' : this.framework}**`}
 
 ### 复现步骤
 ${steps}
