@@ -1,6 +1,4 @@
 
-Taro 正在参与 2020 年度最受欢迎中国开源软件评选， [点击为 Taro 投票](https://www.oschina.net/project/top_cn_2020?utm_source=projectdetail#taro)
-
 ## 在你开始之前……
 
 首先，Taro 的 issue 列表只接受 bug 报告或是新功能请求 (feature requests)。如果你开的 issue 不符合规定，它将会被**立刻关闭**。<br>[为什么要这么严格？](#why-strict)
