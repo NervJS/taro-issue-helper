@@ -16,7 +16,7 @@ jobs:
       - name: build
         run: |
           yarn
-          yarn build
+          yarn build:zone
       - name: Deploy static to Tencent CloudBase
         id: deployStatic
         uses: TencentCloudBase/cloudbase-action@v1.1.1
