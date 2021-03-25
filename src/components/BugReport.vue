@@ -12,7 +12,7 @@
           :loading="loadingVersion"
           show-all
           class="info"
-          show-max="30"
+          show-max="150"
           restrict-choice
           required
         />
