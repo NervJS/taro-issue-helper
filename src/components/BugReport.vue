@@ -313,7 +313,7 @@ export default {
     async fetchVersions () {
       this.loadingVersion = true
       const repo = this.repo
-      const response = await fetch(`https://gitee.com/api/v5/repos/mirrors/Taro/tags`, {
+      const response = await fetch(`https://gitee.com/api/v5/repos/o2team/Taro/tags`, {
         headers: {
           'Access-Control-Allow-Origin': '*'
         }
