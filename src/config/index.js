@@ -12,5 +12,6 @@ export const targets = [
   { id: 'qy', name: '企业微信小程序' },
   { id: 'feishu', name: '飞书小程序' },
   { id: 'kwai', name: '快手小程序' },
-  { id: 'iot', name: '支付宝 IOT 小程序' }
+  { id: 'iot', name: '支付宝 IOT 小程序' },
+  { id: 'harmony', name: '鸿蒙' }
 ]
