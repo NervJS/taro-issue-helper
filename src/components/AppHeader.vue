@@ -4,7 +4,7 @@
       <span class="brand" href="#" style="color: white">
         <img
           class="logo"
-          src="https://taro-docs.jd.com/taro/img/logo-taro.png"
+          src="https://storage.360buyimg.com/pubfree-bucket/taro-docs/c07c6984de/img/logo-taro.png"
           alt="Taro's logo"
           height="24"
         >
